@@ -12,6 +12,9 @@ from datetime import datetime
 import imageio
 import numpy as np
 
+import sys
+sys.path.append("/content/astmt/")
+
 # PyTorch includes
 import torch
 import torch.optim as optim
