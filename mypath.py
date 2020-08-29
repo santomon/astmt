@@ -14,7 +14,7 @@ class Path(object):
     """
     @staticmethod
     def db_root_dir(database=''):
-        db_root = '/path/to/databases'
+        db_root = '/content/databases'
 
         db_names = {'PASCAL_MT', 'NYUD_MT', 'BSDS500', 'NYUD_raw',
                     'PASCAL', 'COCO', 'FSV', 'MSRA10K', 'PASCAL-S'}
@@ -36,9 +36,9 @@ class Path(object):
 
     @staticmethod
     def models_dir():
-        return '/path/to/pre-trained/models/'
+        return '/content/models/'
 
     @staticmethod
     def seism_root_dir():
         # For edge detection evaluation (optional)
-        return '/path/to/seism'
+        return '/content/seism'
