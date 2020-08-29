@@ -88,7 +88,7 @@ def parse_args():
     parser.add_argument('--edge_w', type=float, default=0.95,
                         help='weighting the positive loss for boundary detection as w * L_pos + (1 - w) * L_neg')
 
-    return parser.parse_args()
+    return parser.parse_args("")  #wouldnt work with ipython otherwise
 
 
 def create_config():
