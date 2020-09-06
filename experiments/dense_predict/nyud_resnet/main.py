@@ -18,6 +18,9 @@ import torch
 import torch.optim as optim
 from torch.nn.functional import interpolate
 
+import sys
+sys.path.append("./../../../")
+
 # Custom includes
 from fblib.util.helpers import generate_param_report
 from fblib.util.dense_predict.utils import lr_poly
