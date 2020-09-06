@@ -28,7 +28,7 @@ class Path(object):
 
     @staticmethod
     def save_root_dir():
-        return './'
+        return '/content/gdrive/My Drive/training/astmt/'
 
     @staticmethod
     def exp_dir():
