@@ -319,6 +319,8 @@ def main():
                                                           global_step=curr_iter, tag=ii, phase='test')
 
         writer.close()
+        if epoch == 9:
+            sys.exit()
 
     # Generate Results
     net.eval()
