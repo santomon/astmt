@@ -13,7 +13,7 @@ import imageio
 import numpy as np
 
 import sys
-sys.path.append("/content/astmt/")
+sys.path.append("./../../../")
 
 # PyTorch includes
 import torch
