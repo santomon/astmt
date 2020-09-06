@@ -32,7 +32,7 @@ class Path(object):
 
     @staticmethod
     def exp_dir():
-        return './'
+        return '/content/gdrive/My Drive/training/astmt/'
 
     @staticmethod
     def models_dir():
