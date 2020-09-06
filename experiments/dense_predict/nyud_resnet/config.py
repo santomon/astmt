@@ -60,6 +60,9 @@ def parse_args():
                         help='decoder width (default 256 in Deeplab v3+')
     parser.add_argument('--overfit', type=str2bool, default=False,
                         help='overfit to small subset of data for debugging purposes')
+    
+    parser.add_argument("--use_test", action="store_true",
+                        help="test model performance on test set during training")
 
     # Modulation Parameters
     parser.add_argument('--seenc', type=str2bool, default=True,
@@ -239,7 +242,7 @@ def create_config():
     cfg.TEST = edict()
 
     # See evolution of the test set when training?
-    cfg.TEST.USE_TEST = True
+    cfg.TEST.USE_TEST = args.use_test
     cfg.TEST.TEST_INTER = 10
     cfg.TEST.SCALE = (512, 512)
 
