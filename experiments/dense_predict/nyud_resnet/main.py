@@ -54,7 +54,7 @@ def main():
     print(p)
     print('Training on {}'.format(p['train_db_name']))
 
-    snapshot = 9  # Store a model every snapshot epochs
+    snapshot = 10  # Store a model every snapshot epochs
     test_interval = p.TEST.TEST_INTER  # Run on test set every test_interval epochs
     torch.manual_seed(p.SEED)
 
@@ -317,9 +317,7 @@ def main():
                         curr_iter = ii + num_img_tr * epoch
                         tb_vizualizer.visualize_images_tb(writer, sample, outputs,
                                                           global_step=curr_iter, tag=ii, phase='test')
-            if (epoch % snapshot) == snapshot - 1 and epoch != 0:
-                write.close()
-                sys.exit()
+
         writer.close()
         
 
