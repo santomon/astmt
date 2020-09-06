@@ -317,10 +317,11 @@ def main():
                         curr_iter = ii + num_img_tr * epoch
                         tb_vizualizer.visualize_images_tb(writer, sample, outputs,
                                                           global_step=curr_iter, tag=ii, phase='test')
-
+            if (epoch % snapshot) == snapshot - 1 and epoch != 0:
+                write.close()
+                sys.exit()
         writer.close()
-        if (epoch % snapshot) == snapshot - 1 and epoch != 0:
-            sys.exit()
+        
 
     # Generate Results
     net.eval()
