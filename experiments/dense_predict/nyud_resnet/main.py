@@ -167,7 +167,7 @@ def main():
                         = net.compute_losses(output, features, criteria_tr, gt_elems, alpha, p)
 
                     loss_tasks = losses_tasks[task]
-                    running_loss_tr[task] += losses_tasks[task].item()
+                    running_loss_tr[task] += float(losses_tasks[task].item())
                     curr_loss_task[task] = losses_tasks[task].item()
 
                     counter_tr[task] += 1
@@ -178,8 +178,8 @@ def main():
                     if p['dscr_type'] is not None:
                         # measure loss, accuracy and record accuracy for discriminator
                         loss_dscr = losses_dscr[task]
-                        running_loss_tr_dscr += losses_dscr[task].item()
-                        curr_loss_dscr += loss_dscr.item()
+                        running_loss_tr_dscr += float(losses_dscr[task].item())
+                        curr_loss_dscr += float(loss_dscr.item())
 
                         prec1 = common_configs.accuracy(outputs_dscr[task].data, task_labels[task], topk=(1,))
                         if prec1 != -1:
@@ -269,14 +269,14 @@ def main():
                         losses_tasks, losses_dscr, outputs_dscr, grads, task_labels \
                             = net.compute_losses(output, features, criteria_tr, gt_elems, alpha, p)
 
-                        running_loss_ts[task] += losses_tasks[task].item()
+                        running_loss_ts[task] += float(losses_tasks[task].item())
                         counter_ts[task] += 1
 
                         # For logging
                         outputs[task] = output[task].detach()
 
                         if p['dscr_type'] is not None:
-                            running_loss_ts_dscr += losses_dscr[task].item()
+                            running_loss_ts_dscr += float(losses_dscr[task].item())
 
                             # measure accuracy and record loss for discriminator
                             prec1 = common_configs.accuracy(outputs_dscr[task].data, task_labels[task], topk=(1,))
