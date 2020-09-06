@@ -319,7 +319,7 @@ def main():
                                                           global_step=curr_iter, tag=ii, phase='test')
 
         writer.close()
-        if (epoch + 9) % 9 == 0:
+        if (epoch % snapshot) == snapshot - 1 and epoch != 0:
             sys.exit()
 
     # Generate Results
