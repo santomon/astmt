@@ -64,6 +64,9 @@ def parse_args():
     parser.add_argument("--use_test", action="store_true",
                         help="test model performance on test set during training")
 
+    parser.add_argument("--just_test", action="store_true",
+                        help="only test a model, even if it hasnt finished training")
+
     # Modulation Parameters
     parser.add_argument('--seenc', type=str2bool, default=True,
                         help='Squeeze and excitation per task for encoder? False will still use 1 SE for all tasks')
@@ -241,7 +244,9 @@ def create_config():
 
     cfg.TEST = edict()
 
+
     # See evolution of the test set when training?
+    cfg.TEST.JUST_TEST = args.just_test
     cfg.TEST.USE_TEST = args.use_test
     cfg.TEST.TEST_INTER = 10
     cfg.TEST.SCALE = (512, 512)

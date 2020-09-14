@@ -82,7 +82,7 @@ def main():
 
     net.to(device)
 
-    if p['resume_epoch'] != n_epochs:
+    if p['resume_epoch'] != n_epochs and not p['TEST']['JUST_TEST']:
         criteria_tr = {}
         criteria_ts = {}
 
