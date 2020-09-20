@@ -22,3 +22,7 @@ __pycache__/
 # Tmp out files
 *.txt
 *.out
+
+
+#canny prep
+fblib/dataloaders/example_pascal_context.py

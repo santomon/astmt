@@ -19,6 +19,32 @@ from six.moves import urllib
 
 from fblib import PROJECT_ROOT_DIR
 from fblib.util.mypath import Path
+from scipy.ndimage.filters import convolve, gaussian_filter
+
+
+
+
+def canny_edge(im):
+    im = np.array(im, dtype=float) #Convert to float to prevent clipping values
+
+    #Gaussian blur to reduce noise
+    im2 = gaussian_filter(im, 3)
+    #Use sobel filters to get horizontal and vertical gradients
+    im3h = convolve(im2,[[-1,0,1],[-2,0,2],[-1,0,1]])
+    im3v = convolve(im2,[[1,2,1],[0,0,0],[-1,-2,-1]])
+
+    #Get gradient and direction
+    grad = np.power(np.power(im3h, 2.0) + np.power(im3v, 2.0), 0.5)
+    theta = np.arctan2(im3v, im3h)
+    thetaQ = (np.round(theta * (5.0 / np.pi)) + 5) % 5 #Quantize direction
+    return grad
+
+def rgb2gray(rgb):
+
+    r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
+    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+
+    return gray
 
 
 class PASCALContext(data.Dataset):
@@ -288,10 +314,10 @@ class PASCALContext(data.Dataset):
         return _img
 
     def _load_edge(self, index):
-        # Read Target object
-        _tmp = sio.loadmat(self.edges[index])
-        _edge = cv2.Laplacian(_tmp['LabelMap'], cv2.CV_64F)
-        _edge = thin(np.abs(_edge) > 0).astype(np.float32)
+
+        img = np.array(Image.open(self.images[index]).convert('RGB')).astype(np.float32)
+        grey = rgb2gray(img)
+        _edge = canny_edge(grey)/255
         return _edge
 
     def _load_human_parts(self, index):
