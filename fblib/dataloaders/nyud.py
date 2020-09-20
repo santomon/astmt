@@ -16,6 +16,29 @@ import scipy.io as sio
 from six.moves import urllib
 
 from fblib.util.mypath import Path
+from scipy.ndimage.filters import convolve, gaussian_filter
+
+def canny_edge(im):
+    im = np.array(im, dtype=float) #Convert to float to prevent clipping values
+
+    #Gaussian blur to reduce noise
+    im2 = gaussian_filter(im, 3)
+    #Use sobel filters to get horizontal and vertical gradients
+    im3h = convolve(im2,[[-1,0,1],[-2,0,2],[-1,0,1]])
+    im3v = convolve(im2,[[1,2,1],[0,0,0],[-1,-2,-1]])
+
+    #Get gradient and direction
+    grad = np.power(np.power(im3h, 2.0) + np.power(im3v, 2.0), 0.5)
+    theta = np.arctan2(im3v, im3h)
+    thetaQ = (np.round(theta * (5.0 / np.pi)) + 5) % 5 #Quantize direction
+    return grad
+
+def rgb2gray(rgb):
+
+    r, g, b = rgb[:,:,0], rgb[:,:,1], rgb[:,:,2]
+    gray = 0.2989 * r + 0.5870 * g + 0.1140 * b
+
+    return gray
 
 
 class NYUD_MT(data.Dataset):
@@ -96,10 +119,11 @@ class NYUD_MT(data.Dataset):
                 self.images.append(_image)
                 self.im_ids.append(line.rstrip('\n'))
 
-                # Edges
-                _edge = os.path.join(self.root, _edge_gt_dir, line + '.png')
-                assert os.path.isfile(_edge)
-                self.edges.append(_edge)
+                # Edges (not needed anymore, since we generate the ground truth with canny edge detector on demand
+                #_edge = os.path.join(self.root, _edge_gt_dir, line, 'png')
+                #assert os.path.isfile(_edge)
+                #self.edges.append(_edge)
+
 
                 # Semantic Segmentation
                 _semseg = os.path.join(self.root, _semseg_gt_dir, line + '.mat')
@@ -180,8 +204,13 @@ class NYUD_MT(data.Dataset):
         _img = np.array(Image.open(self.images[index]).convert('RGB')).astype(np.float32)
         return _img
 
+
     def _load_edge(self, index):
-        _edge = np.array(Image.open(self.edges[index])).astype(np.float32) / 255.
+        #_edge = np.array(Image.open(self.edges[index])).astype(np.float32) / 255.
+        img = np.array(Image.open(self.images[index]).convert('RGB')).astype(np.float32)
+        grey = rgb2gray(img)
+        _edge = canny_edge(grey)/255
+
         return _edge
 
     def _load_semseg(self, index):
