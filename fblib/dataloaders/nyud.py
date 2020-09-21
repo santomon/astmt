@@ -125,6 +125,7 @@ class NYUD_MT(data.Dataset):
                 #self.edges.append(_edge)
 
 
+
                 # Semantic Segmentation
                 _semseg = os.path.join(self.root, _semseg_gt_dir, line + '.mat')
                 assert os.path.isfile(_semseg)
@@ -138,8 +139,8 @@ class NYUD_MT(data.Dataset):
                 assert os.path.isfile(_depth)
                 self.depths.append(_depth)
 
-        if self.do_edge:
-            assert (len(self.images) == len(self.edges))
+        #if self.do_edge:
+        #    assert (len(self.images) == len(self.edges))
         if self.do_semseg:
             assert (len(self.images) == len(self.semsegs))
         if self.do_normals:
