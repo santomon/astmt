@@ -12,7 +12,7 @@ from fblib.util.helpers import worker_seed
 import fblib.util.pdf_visualizer as viz
 
 # Losses
-from fblib.layers.loss import BalancedCrossEntropyLoss, SoftMaxwithLoss, NormalsLoss, DepthLoss
+from fblib.layers.loss import BalancedCrossEntropyLoss, SoftMaxwithLoss, NormalsLoss, DepthLoss, MaskedL1Loss
 
 # Dataloaders
 import fblib.dataloaders as dbs
@@ -141,7 +141,8 @@ def get_transformations(p):
 
 def get_loss(p, task=None):
     if task == 'edge':
-        criterion = BalancedCrossEntropyLoss(size_average=True, pos_weight=p['edge_w'])
+        # criterion = BalancedCrossEntropyLoss(size_average=True, pos_weight=p['edge_w'])
+        criterion = MaskedL1Loss()
     elif task == 'semseg' or task == 'human_parts':
         criterion = SoftMaxwithLoss()
     elif task == 'normals':
