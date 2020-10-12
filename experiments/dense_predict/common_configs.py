@@ -96,14 +96,15 @@ def eval_all_results(p):
                                   exp_name=p['exp_name'],
                                   overfit=p.overfit)
 
-    if 'DO_EDGE' in p and p.DO_EDGE and p['eval_edge']:
-        from fblib.evaluation.eval_edges import sync_and_evaluate_one_folder
-        for db in p['infer_db_names']:
-            sync_and_evaluate_one_folder(database=db,
-                                         save_dir=p['save_dir_root'],
-                                         exp_name=p['exp_name'],
-                                         prefix=p['tasks_name'],
-                                         all_tasks_present=(p.MINI if 'MINI' in p else False))
+
+    #if 'DO_EDGE' in p and p.DO_EDGE and p['eval_edge']:
+    #    from fblib.evaluation.eval_edges import sync_and_evaluate_one_folder
+    #    for db in p['infer_db_names']:
+    #        sync_and_evaluate_one_folder(database=db,
+    #                                     save_dir=p['save_dir_root'],
+    #                                     exp_name=p['exp_name'],
+    #                                     prefix=p['tasks_name'],
+    #                                      all_tasks_present=(p.MINI if 'MINI' in p else False))
 
     ## new custom edge eval
     if 'DO_EDGE' in p and p.DO_EDGE and p['eval_edge']:
