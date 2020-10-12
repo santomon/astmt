@@ -109,7 +109,7 @@ def eval_all_results(p):
     ## new custom edge eval
     if 'DO_EDGE' in p and p.DO_EDGE and p['eval_edge']:
         from fblib.evaluation.eval_edges import eval_and_store_edges
-        for dv in p['infer_db_names']:
+        for db in p['infer_db_names']:
             eval_and_store_edges(database=db,
                                 save_dir=p['save_dir_root'],
                                 exp_name=p['exp_name'],
