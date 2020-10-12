@@ -65,6 +65,9 @@ def parse_args():
     parser.add_argument("--use_test", action="store_true",
                         help="test model performance on test set during training")
 
+    parser.add_argument("--just_test", action="store_true",
+                        help="if you want to just test the model and not train at all")
+
 
     # Modulation Parameters
     parser.add_argument('--seenc', type=str2bool, default=True,
@@ -265,6 +268,7 @@ def create_config():
     cfg.TEST = edict()
 
     # See evolution of the test set when training?
+    cfg.TEST.JUST_TEST = args.just_test
     cfg.TEST.USE_TEST = args.use_test
     cfg.TEST.TEST_INTER = 10
     cfg.TEST.SCALE = (512, 512)
