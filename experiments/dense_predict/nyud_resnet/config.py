@@ -190,7 +190,7 @@ def create_config():
 
         # Add task-specific parameters from parser
         cfg['edge_w'] = args.edge_w
-        cfg['eval_edge'] = False
+        cfg['eval_edge'] = args.eval_edges
 
     if cfg.DO_SEMSEG:
         # Semantic Segmentation
