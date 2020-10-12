@@ -65,6 +65,7 @@ def parse_args():
     parser.add_argument("--use_test", action="store_true",
                         help="test model performance on test set during training")
 
+
     # Modulation Parameters
     parser.add_argument('--seenc', type=str2bool, default=True,
                         help='Squeeze and excitation per task for encoder? False will still use 1 SE for all tasks')
@@ -90,6 +91,9 @@ def parse_args():
     # Task-specific parameters
     parser.add_argument('--edge_w', type=float, default=0.95,
                         help='weighting the positive loss for boundary detection as w * L_pos + (1 - w) * L_neg')
+    parser.add_argument('--eval_edges', action='store_true',
+                        help="evaluate edges when measuring performance?")
+
 
     return parser.parse_args()
 
@@ -192,7 +196,7 @@ def create_config():
 
         # Add task-specific parameters from parser
         cfg['edge_w'] = args.edge_w
-        cfg['eval_edge'] = False
+        cfg['eval_edge'] = args.eval_edges
 
     if cfg.DO_SEMSEG:
         # Semantic Segmentation
