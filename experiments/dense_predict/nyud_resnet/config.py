@@ -92,6 +92,8 @@ def parse_args():
     # Task-specific parameters
     parser.add_argument('--edge_w', type=float, default=0.8,
                         help='Weighting the positive loss for boundary detection as w * L_pos + (1 - w) * L_neg')
+    parser.add_argument('--eval_edges', action='store_true',
+                        help="flag for evaluating edges")
 
     return parser.parse_args()
 
