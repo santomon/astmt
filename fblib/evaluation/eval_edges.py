@@ -7,6 +7,10 @@
 import os
 import glob
 import json
+from PIL import Image
+import numpy as np
+import cv2
+import warnings
 
 from fblib.util.mypath import Path
 
@@ -134,6 +138,90 @@ def gather_results(p, database):
                                save_dir=p['save_dir_root'],
                                exp_name=exp,
                                prefix=p['save_dir_root'].split('/')[-1])
+
+
+def eval_and_store_edges(database, save_dir, exp_name, overfit):
+
+    # unofficial evaluation of edges; NO SAVING, no overfit implementation
+    # just rmse and mean err
+
+    if overfit:
+        raise NotImplementedError
+
+    # Dataloaders
+    if database == 'NYUD':
+        from fblib.dataloaders import nyud as nyud
+        gt_set = 'val'
+        db = nyud.NYUD_MT(split=gt_set, do_depth=True, overfit=overfit)
+    elif database == 'PASCALContext':
+        from fblib.dataloaders import pascal_context as pascal_context
+        gt_set = 'val'
+        db = pascal_context.PASCALContext(split=gt_set, do_edge=True, overfit=overfit)
+    else:
+        raise NotImplementedError
+
+    res_dir = os.path.join(save_dir, exp_name, 'Results_' + database)
+    eval_results = eval_edges(db, os.path.join(res_dir, 'edge'))
+
+    print('Results for Depth Estimation')
+    for x in eval_results:
+        spaces = ''
+        for j in range(0, 15 - len(x)):
+            spaces += ' '
+        print('{0:s}{1:s}{2:.4f}'.format(x, spaces, eval_results[x]))
+
+
+
+
+
+
+
+def eval_edges(loader, folder):
+    # unofficial evaluation of edges; no saving, no overfit implementation
+    # just rmse and mean err
+
+    rmses = []
+    log_rmses = []
+
+    for i, sample in enumerate(loader):
+
+        if i % 500 == 0:
+            print('Evaluating edges: {} of {} objects'.format(i, len(loader)))
+
+        filename = os.path.join(folder, sample['meta']['image'] + '.png')
+        pred = np.asarray(Image.open(filename))..astype(np.float32)
+
+        label = sample['edge']
+
+        if pred.shape != label.shape:
+            warnings.warn('Prediction and ground truth have different size. Resizing Prediction..')
+            pred = cv2.resize(pred, label.shape[::-1], interpolation=cv2.INTER_LINEAR)
+
+        label[label == 0] = 1e-9
+        pred[pred <= 0] = 1e-9
+
+        valid_mask = (label != 0)
+        pred[np.invert(valid_mask)] = 0.
+        label[np.invert(valid_mask)] = 0.
+        n_valid = np.sum(valid_mask)
+
+        log_rmse_tmp = (np.log(label) - np.log(pred)) ** 2
+        log_rmse_tmp = np.sqrt(np.sum(log_rmse_tmp) / n_valid)
+        log_rmses.extend([log_rmse_tmp])
+
+        rmse_tmp = (label - pred) ** 2
+        rmse_tmp = np.sqrt(np.sum(rmse_tmp) / n_valid)
+        rmses.extend([rmse_tmp])
+
+    rmses = np.array(rmses)
+    log_rmses = np.array(log_rmses)
+
+    eval_result = dict()
+    eval_result['rmse'] = np.mean(rmses)
+    eval_result['log_rmse'] = np.median(log_rmses)
+
+    return eval_result
+
 
 
 def main():

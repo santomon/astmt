@@ -105,6 +105,16 @@ def eval_all_results(p):
                                          prefix=p['tasks_name'],
                                          all_tasks_present=(p.MINI if 'MINI' in p else False))
 
+    ## new custom edge eval
+    if 'DO_EDGE' in p and p.DO_EDGE and p['eval_edge']:
+        from fblib.evaluation.eval_edges import eval_and_store_edges
+        for dv in p['infer_db_names']:
+            eval_and_store_edges(database=db,
+                                save_dir=p['save_dir_root'],
+                                exp_name=p['exp_name'],
+                                overfit=p.overfit)
+
+
 
 def get_transformations(p):
     """
@@ -246,8 +256,12 @@ def get_output(output, task):
         output = (normal_ize(output, dim=3) + 1.0) * 255 / 2.0
     elif task in {'semseg', 'human_parts'}:
         _, output = torch.max(output, dim=3)
-    elif task in {'edge', 'sal'}:
+    # elif task in {'edge', 'sal'}:
+    #     output = torch.squeeze(255 * 1 / (1 + torch.exp(-output)))
+    elif task == 'sal':
         output = torch.squeeze(255 * 1 / (1 + torch.exp(-output)))
+    elif task == 'edge':
+        output = torch.squeeze(255 * output)        # setup when using masked loss
     elif task in {'depth'}:
         pass
     else:
