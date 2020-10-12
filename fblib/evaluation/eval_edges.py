@@ -189,7 +189,7 @@ def eval_edges(loader, folder):
             print('Evaluating edges: {} of {} objects'.format(i, len(loader)))
 
         filename = os.path.join(folder, sample['meta']['image'] + '.png')
-        pred = np.asarray(Image.open(filename))..astype(np.float32)
+        pred = np.asarray(Image.open(filename)).astype(np.float32)
 
         label = sample['edge']
 
