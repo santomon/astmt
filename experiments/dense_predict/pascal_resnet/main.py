@@ -321,44 +321,48 @@ def main():
 
     # Generate Results
     net.eval()
+
+
     _, _, transforms_infer = config.get_transformations(p)
-    for db_name in p['infer_db_names']:
 
-        testloader = config.get_test_loader(p, db_name=db_name, transforms=transforms_infer, infer=True)
-        save_dir_res = os.path.join(p['save_dir'], 'Results_' + db_name)
+    if p.TEST.SKIP_PRED:
+        for db_name in p['infer_db_names']:
 
-        print('Testing Network')
-        # Main Testing Loop
-        with torch.no_grad():
-            for ii, sample in enumerate(testloader):
+            testloader = config.get_test_loader(p, db_name=db_name, transforms=transforms_infer, infer=True)
+            save_dir_res = os.path.join(p['save_dir'], 'Results_' + db_name)
 
-                img, meta = sample['image'], sample['meta']
+            print('Testing Network')
+            # Main Testing Loop
+            with torch.no_grad():
+                for ii, sample in enumerate(testloader):
 
-                # Forward pass of the mini-batch
-                inputs = img.to(device)
-                tasks = net.tasks
+                    img, meta = sample['image'], sample['meta']
 
-                for task in tasks:
-                    output, _ = net.forward(inputs, task=task)
+                    # Forward pass of the mini-batch
+                    inputs = img.to(device)
+                    tasks = net.tasks
 
-                    save_dir_task = os.path.join(save_dir_res, task)
-                    if not os.path.exists(save_dir_task):
-                        os.makedirs(save_dir_task)
+                    for task in tasks:
+                        output, _ = net.forward(inputs, task=task)
 
-                    output = interpolate(output, size=(inputs.size()[-2], inputs.size()[-1]),
-                                         mode='bilinear', align_corners=False)
-                    output = common_configs.get_output(output, task)
+                        save_dir_task = os.path.join(save_dir_res, task)
+                        if not os.path.exists(save_dir_task):
+                            os.makedirs(save_dir_task)
 
-                    for jj in range(int(inputs.size()[0])):
-                        if len(sample[task][jj].unique()) == 1 and sample[task][jj].unique() == 255:
-                            continue
+                        output = interpolate(output, size=(inputs.size()[-2], inputs.size()[-1]),
+                                             mode='bilinear', align_corners=False)
+                        output = common_configs.get_output(output, task)
 
-                        fname = meta['image'][jj]
+                        for jj in range(int(inputs.size()[0])):
+                            if len(sample[task][jj].unique()) == 1 and sample[task][jj].unique() == 255:
+                                continue
 
-                        result = cv2.resize(output[jj], dsize=(meta['im_size'][1][jj], meta['im_size'][0][jj]),
-                                            interpolation=p.TASKS.INFER_FLAGVALS[task])
+                            fname = meta['image'][jj]
 
-                        imageio.imwrite(os.path.join(save_dir_task, fname + '.png'), result.astype(np.uint8))
+                            result = cv2.resize(output[jj], dsize=(meta['im_size'][1][jj], meta['im_size'][0][jj]),
+                                                interpolation=p.TASKS.INFER_FLAGVALS[task])
+
+                            imageio.imwrite(os.path.join(save_dir_task, fname + '.png'), result.astype(np.uint8))
 
     if p.EVALUATE:
         common_configs.eval_all_results(p)

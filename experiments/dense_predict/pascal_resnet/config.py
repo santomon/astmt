@@ -67,6 +67,11 @@ def parse_args():
 
     parser.add_argument("--just_test", action="store_true",
                         help="if you want to just test the model and not train at all")
+    parser.add_argument("--skip_pred", action="store_true",
+                        help="if you want to skip the generation of predictions for result computation;"
+                             "ONLY DO THIS FOR EDGES, PASCALContext, "
+                             "and if predictions were already generated!")
+    #TODO if other than edges fixed to recompute results; change this
 
 
     # Modulation Parameters
@@ -268,6 +273,7 @@ def create_config():
     cfg.TEST = edict()
 
     # See evolution of the test set when training?
+    cfg.TEST.SKIP_PRED = args.skip_pred
     cfg.TEST.JUST_TEST = args.just_test
     cfg.TEST.USE_TEST = args.use_test
     cfg.TEST.TEST_INTER = 10
