@@ -325,7 +325,7 @@ def main():
 
     _, _, transforms_infer = config.get_transformations(p)
 
-    if p.TEST.SKIP_PRED:
+    if not p.TEST.SKIP_PRED:
         for db_name in p['infer_db_names']:
 
             testloader = config.get_test_loader(p, db_name=db_name, transforms=transforms_infer, infer=True)
