@@ -22,7 +22,7 @@ from experiments.dense_predict.common_configs import get_loss, get_train_loader,
 from fblib.util.mypath import Path
 
 
-def parse_args():
+def parse_args(parse_string: str = None):
 
     def str2bool(v):
         return v.lower() in ("yes", "true", "t", "1")
@@ -95,14 +95,17 @@ def parse_args():
     parser.add_argument('--eval_edges', action='store_true',
                         help="flag for evaluating edges")
 
-    return parser.parse_args()
+    if parse_string is None:
+        return parser.parse_args()
+    else:
+        return parser.parse_args(parse_string)
 
 
-def create_config():
+def create_config(parse_string: str = None):
 
     cfg = edict()
 
-    args = parse_args()
+    args = parse_args(parse_string)
 
     # Parse tasks
     assert (len(args.active_tasks) == 4)
