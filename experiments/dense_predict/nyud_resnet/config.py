@@ -273,6 +273,7 @@ def create_config(parse_string: str = None):
         cfg['save_dir_root'] = os.path.join(Path.exp_dir(), cfg['exp_folder_name'])
         cfg['exp_name'] = 'test'
 
+    cfg['save_dir'] = os.path.join(cfg['save_dir_root'], cfg['exp_name'])
 
     return cfg
 
