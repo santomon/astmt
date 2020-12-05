@@ -102,6 +102,11 @@ def parse_args(parse_string:str = None):
     parser.add_argument('--eval_edges', action='store_true',
                         help="evaluate edges when measuring performance?")
 
+    parser.add_argument('--SSF', action='store_true', default=False,
+                        help="modifies path, to load model from ./SSF/<regular rest of path>")
+
+
+
     if parse_string is None:
         return parser.parse_args()
     else:
@@ -290,7 +295,11 @@ def create_config(parse_string: str = None):
         cfg['save_dir_root'] = os.path.join(Path.exp_dir(), cfg['exp_folder_name'])
         cfg['exp_name'] = 'test'
 
-    cfg['save_dir'] = os.path.join(cfg['save_dir_root'], cfg['exp_name'])
+    if args.SSF:
+        cfg['save_dir'] = os.path.join(cfg['save_dir_root'], "SSF", cfg['exp_name'])
+    else:
+        cfg['save_dir'] = os.path.join(cfg['save_dir_root'], cfg['exp_name'])
+
     return cfg
 
 
