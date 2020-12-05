@@ -167,7 +167,12 @@ def create_config(parse_string: str = None):
     cfg['exp_folder_name'] = 'nyud_resnet'
     cfg['exp_name'] = "_".join(name_args)
     cfg['tasks_name'] = "_".join(task_args)
-    cfg['save_dir_root'] = os.path.join(Path.exp_dir(), cfg['exp_folder_name'], cfg['tasks_name'])
+
+    if args.SSF:
+        cfg['save_dir_root'] = os.path.join(Path.exp_dir(), 'SSF', cfg['exp_folder_name'], cfg['tasks_name'])
+    else:
+        cfg['save_dir_root'] = os.path.join(Path.exp_dir(), cfg['exp_folder_name'], cfg['tasks_name'])
+
     cfg['train_db_name'] = ['NYUD', ]
     cfg['test_db_name'] = 'NYUD'
     cfg['infer_db_names'] = ['NYUD', ]
@@ -268,10 +273,6 @@ def create_config(parse_string: str = None):
         cfg['save_dir_root'] = os.path.join(Path.exp_dir(), cfg['exp_folder_name'])
         cfg['exp_name'] = 'test'
 
-    if args.SSF:
-        cfg['save_dir'] = os.path.join(cfg['save_dir_root'], "SSF", cfg['exp_name'])
-    else:
-        cfg['save_dir'] = os.path.join(cfg['save_dir_root'], cfg['exp_name'])
 
     return cfg
 
