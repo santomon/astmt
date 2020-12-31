@@ -152,7 +152,7 @@ def eval_and_store_edges(database, save_dir, exp_name, overfit):
     if database == 'NYUD':
         from fblib.dataloaders import nyud as nyud
         gt_set = 'val'
-        db = nyud.NYUD_MT(split=gt_set, do_depth=True, overfit=overfit)
+        db = nyud.NYUD_MT(split=gt_set, do_edge=True, overfit=overfit)
     elif database == 'PASCALContext':
         from fblib.dataloaders import pascal_context as pascal_context
         gt_set = 'val'
@@ -197,13 +197,11 @@ def eval_edges(loader, folder):
             warnings.warn('Prediction and ground truth have different size. Resizing Prediction..')
             pred = cv2.resize(pred, label.shape[::-1], interpolation=cv2.INTER_LINEAR)
 
-        label[label == 0] = 1e-9
-        pred[pred <= 0] = 1e-9
+        valid_mask = (label < 1e-9)
+        pred = np.ma.array(pred, valid_mask).filled(0)
+        label = np.ma.array(label, valid_mask).filled(0)  # set values to 0, wherever the label value is smaller than 1e-9
 
-        valid_mask = (label != 0)
-        pred[np.invert(valid_mask)] = 0.
-        label[np.invert(valid_mask)] = 0.
-        n_valid = np.sum(valid_mask)
+        n_valid = np.sum(valid_mask)                      # only evaluate, where we would find edges
 
         log_rmse_tmp = (np.log(label) - np.log(pred)) ** 2
         log_rmse_tmp = np.sqrt(np.sum(log_rmse_tmp) / n_valid)
