@@ -7,11 +7,16 @@
 import torch
 import collections
 import re
-from torch._six import string_classes, int_classes
+from torch._six import string_classes
 
 _use_shared_memory = False
 r"""Whether to use shared memory in default_collate"""
 
+int_classes = int
+# int_classes used to be imported from torch._six, but the line in torch._six was literally
+#    int_classes = int
+# it was removed in an update 15.06.21
+#src (20.06.21): https://fossies.org/diffs/pytorch/1.8.1_vs_1.9.0/torch/_six.py-diff.html 
 
 numpy_type_map = {
     'float64': torch.DoubleTensor,
